@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <!-- 
+        hr.attendance.machine.employee
+     -->
+    <record id="hr_attendance_machine_employee_view_form" model="ir.ui.view">
+        <field name="name">hr.attendance.machine.employee.view.form</field>
+        <field name="model">hr.attendance.machine.employee</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Machine Employee">
+                <group>
+                    <group name="left">
+                        <!-- <field name="attendance_machine_id"/> -->
+                        <field name="device_pk_employee_id"/>
+                        <field name="employee_id"/>
+                    </group>
+                    <group name="right">
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_attendance_machine_employee_view_tree" model="ir.ui.view">
+        <field name="name">hr.attendance.machine.employee.view.tree</field>
+        <field name="model">hr.attendance.machine.employee</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="attendance_machine_id"/>
+                <field name="employee_id"/>
+                <field name="device_pk_employee_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="act_attendance_machine_to_attendance_machine_employee" model="ir.actions.act_window">
+        <field name="name">Attendance Machine Employee</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.attendance.machine.employee</field>
+        <field name="src_model">hr.attendance.machine</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('attendance_machine_id','=',active_id)]</field>
+        <field name="view_id" ref="hr_attendance_machine_employee_view_tree"/>
+    </record>
+    
+    <!-- 
+        hr.attendance.machine
+     -->
+    <record id="hr_attendance_machine_view_form" model="ir.ui.view">
+        <field name="name">hr.attendance.machine.view.form</field>
+        <field name="model">hr.attendance.machine</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Machine">
+                <field name="attendance_machine_employee_ids" invisible="1"/>
+                <header>
+                    <button name="download_attendance" type="object" string="Download Data" class="oe_highlight" icon="fa-download" attrs="{'invisible':[('attendance_machine_employee_ids','=',[])]}"/>
+                    <button name="try_connection" type="object" string="Try connection"/>
+                    <button name="sync_employee_id" type="object" string="Sync Employee ID"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(act_attendance_machine_to_attendance_machine_employee)d"
+                            type="action"
+                            class="oe_stat_button"
+                            icon="fa-users"
+                            attrs="{'invisible':[('attendance_machine_employee_ids','=',[])]}"
+                            help="ID Employee yang telah di sinkronkan dengan mesin absen.">
+                            <field string="Attendance Machine Employee" name="attendance_machine_employee_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" />
+                        <h1>
+                            <field name="name" placeholder="Machine IP or Domain"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="port_no"/>
+                            <field name="loginid"/>
+                            <field name="password_or_key" password="True"/>
+                            <field name="timeout"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="ip_local"/>
+                            <field name="address_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="hr_attendance_machine_view_tree" model="ir.ui.view">
+        <field name="name">hr.attendance.machine.view.tree</field>
+        <field name="model">hr.attendance.machine</field>
+        <field name="arch" type="xml">
+            <tree string="Device Configuration" decoration-muted="(not active)">
+                <field name="name"/>
+                <field name="port_no" type="char"/>
+                <field name="timeout" type="char"/>
+                <field name="ip_local"/>
+                <field name="address_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hr_attendance_machine_view_search" model="ir.ui.view">
+        <field name="name">hr.attendance.machine.view.search</field>
+        <field name="model">hr.attendance.machine</field>
+        <field name="arch" type="xml">
+            <search string="Search Device Configuration">
+                <field name="name"/>
+                <field name="port_no"/>
+                <field name="ip_local"/>
+                <field name="loginid"/>
+                <field name="active"/>
+                <filter string="All" name="all" domain="['|', ('active', '=', False), ('active', '=', True)]" />
+            </search>
+        </field>
+    </record>
+
+    <record id="hr_attendance_device_action" model="ir.actions.act_window">
+        <field name="name">Device Configuration</field>
+        <field name="res_model">hr.attendance.machine</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="hr_attendance_machine_view_search"/>
+        <field name="context">{'search_default_all':1,}</field>
+    </record>
+    
+    <menuitem id="menu_hr_attendance_machine"
+        parent="hr_attendance.menu_hr_attendance_root"
+        sequence="50"
+        name="Attendance Machine/Device"
+        groups="hr_attendance.group_hr_attendance_user"/>
+    
+    <menuitem id="menu_hr_attendance_device_configuration"
+        parent="menu_hr_attendance_machine"
+        name="Device Configuration"
+        action="hr_attendance_device_action"
+        sequence="1"/>
+
+</odoo>

@@ -1,0 +1,2 @@
+import hr
+import hr_attendance_machine
