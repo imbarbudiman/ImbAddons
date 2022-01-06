@@ -1,6 +1,6 @@
 {
     'name': 'Imb Expenses',
-    'version': '14.0.1',
+    'version': '14.0.0.1',
     'category': 'Human Resources/Expenses',
     'summary': 'Custom Expenses',
     'description': """
