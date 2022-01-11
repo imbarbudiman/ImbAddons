@@ -16,6 +16,3 @@ class HrExpense(models.Model):
             expense.message_post(attachment_ids=[attachment.id])
             
         return res
-    
-    def action_test_aja(self):
-        print('=============================================== action_test_aja')
